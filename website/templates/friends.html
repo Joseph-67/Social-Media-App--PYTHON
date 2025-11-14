@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">My Friends ({{ friends|length }})</h4>
+                </div>
+                <div class="card-body">
+                    {% if friends %}
+                        <div class="row">
+                            {% for friend in friends %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        {% if friend.profile_picture %}
+                                            <img src="{{ friend.profile_picture }}" class="rounded-circle mb-2" width="60" height="60" alt="Profile">
+                                        {% else %}
+                                            <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px;">
+                                                <i class="fas fa-user text-white"></i>
+                                            </div>
+                                        {% endif %}
+                                        <h6 class="card-title">{{ friend.first_name }} {{ friend.last_name }}</h6>
+                                        <p class="card-text text-muted small">{{ friend.email }}</p>
+                                        {% if friend.bio %}
+                                            <p class="card-text small">{{ friend.bio[:50] }}{% if friend.bio|length > 50 %}...{% endif %}</p>
+                                        {% endif %}
+                                        <a href="{{ url_for('views.user_profile', id=friend.id) }}" class="btn btn-primary btn-sm">View Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No friends yet</h5>
+                            <p class="text-muted">Start connecting with people by sending friend requests!</p>
+                            <a href="{{ url_for('views.search', search='') }}" class="btn btn-primary">Find People</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %} 
+{% block body %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-users"></i> Find People</h2>
+        <div>
+            <a href="{{ url_for('views.friends') }}" class="btn btn-outline-primary">
+                <i class="fas fa-user-friends"></i> My Friends
+            </a>
+            <a href="{{ url_for('views.friend_requests') }}" class="btn btn-outline-info">
+                <i class="fas fa-user-clock"></i> Friend Requests
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Form -->
+    <form action="{{ url_for('views.search') }}" method="post" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="search" 
+                   placeholder="Search for people by name or email..." required>
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <h3>All Users</h3>
+    <div class="row">
+        {% for person in users %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <!-- Profile Picture -->
+                    <div class="mb-3">
+                        {% if person.profile_picture %}
+                            <img src="{{ url_for('static', filename='profile_pictures/' + person.profile_picture) }}" 
+                                 class="rounded-circle" width="80" height="80" alt="Profile Picture">
+                        {% else %}
+                            <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x text-white"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- User Info -->
+                    <h5 class="card-title">
+                        <a href="{{ url_for('views.user_profile', id=person.id) }}" 
+                           class="text-decoration-none">
+                            {{ person.first_name }} {{ person.last_name }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted small">{{ person.email }}</p>
+                    
+                    {% if person.bio %}
+                    <p class="card-text small">{{ person.bio[:100] }}{% if person.bio|length > 100 %}...{% endif %}</p>
+                    {% endif %}
+
+                    <!-- Action Buttons -->
+                    <div class="mt-3">
+                        {% if person.is_friend %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check"></i> Friends
+                            </span>
+                        {% elif person.has_pending_request %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-clock"></i> Request Received
+                            </span>
+                        {% elif person.has_sent_request %}
+                            <span class="badge bg-info">
+                                <i class="fas fa-paper-plane"></i> Request Sent
+                            </span>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('views.send_friend_request_route', user_id=person.id) }}" 
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-user-plus"></i> Add Friend
+                                </button>
+                            </form>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('views.user_profile', id=person.id) }}" 
+                           class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-eye"></i> View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not users %}
+    <div class="text-center py-5">
+        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">No other users found</h4>
+        <p class="text-muted">Be the first to invite friends to join!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

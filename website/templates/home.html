@@ -1,0 +1,88 @@
+{% extends "base.html" %} 
+{% block body %}
+<div class="container">
+  <form action="" method="post">
+    <div class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search..."
+        aria-label="Search"
+        aria-describedby="button-addon2"
+        name="search"
+      />
+      <input
+        class="btn btn-outline-primary"
+        type="submit"
+        id="button-addon2"
+        value="Search"
+      />
+    </div>
+  </form>
+
+  <h1>Recent Posts</h1>
+
+  {% for item in posts %}
+  <div class="border" style="border-radius: 10px; padding: 5px">
+    <a href="/profile/{{ item.user.id }}" style="text-decoration: none;">
+      <img
+        src="../static/profile_pictures/{{ item.user.profile_picture }}"
+        alt="Avatar Image"
+        style="border-radius: 50%; width: 30px; height: 30px"
+      />
+    </a>
+    <a href="/profile/{{ item.user.id }}" style="color: #6e8898; text-decoration: none;">
+      <small>{{ item.user.first_name }} {{ item.user.last_name }}</small>
+    </a>
+
+    {% if item.post.title %}
+    <h5>
+      <a href="/post/{{ item.post.id }}" style="color:black;text-decoration: none;">
+        <strong>{{ item.post.title }}</strong>
+      </a>
+    </h5>
+    {% endif %}
+    
+    <p>{{ item.post.content | nl2br }}</p>
+
+    <!-- Display image if exists -->
+    {% if item.post.image %}
+    <div class="mb-2">
+      <img src="{{ url_for('static', filename='uploads/' + item.post.image) }}" 
+           class="img-fluid" style="max-width: 100%; height: auto; border-radius: 5px;" alt="Post image">
+    </div>
+    {% endif %}
+
+    <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+      <!-- Liking Post -->
+      <form action="/post/{{ item.post.id }}/like" method="post" style="display:inline">
+        <button type="submit" class="btn btn-sm {% if item.post.user_liked %}btn-primary{% else %}btn-outline-primary{% endif %}">
+          <i class="fas fa-thumbs-up"></i> {{ item.post.likes_count }}
+        </button>
+      </form>
+
+      <!-- Disliking Post -->
+      <form action="/post/{{ item.post.id }}/dislike" method="post" style="display:inline">
+        <button type="submit" class="btn btn-sm {% if item.post.user_disliked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+          <i class="fas fa-thumbs-down"></i> {{ item.post.dislikes_count }}
+        </button>
+      </form>
+
+      <!-- Comment count -->
+      <a href="/post/{{ item.post.id }}" class="btn btn-sm btn-outline-secondary">
+        <i class="fas fa-comment"></i> {{ item.post.comments_count }} Comments
+      </a>
+    </div>
+
+    <!-- Quick comment form -->
+    <form action="/post/{{ item.post.id }}/comment/" method="post" class="mt-2">
+      <div class="input-group">
+        <input type="text" class="form-control form-control-sm" name="comment" placeholder="Add a comment...">
+        <button type="submit" class="btn btn-outline-primary btn-sm">Post</button>
+      </div>
+    </form>
+  </div>
+  <br />
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Post Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <!-- Post Header -->
+                    <div class="d-flex align-items-center mb-3">
+                        {% if post_user.profile_picture %}
+                            <img src="{{ url_for('static', filename='profile_pictures/' + post_user.profile_picture) }}" 
+                                 class="rounded-circle me-3" width="40" height="40" alt="Profile">
+                        {% else %}
+                            <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center me-3" 
+                                 style="width: 40px; height: 40px;">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">
+                                <a href="/profile/{{ post_user.id }}" class="text-decoration-none">
+                                    {{ post_user.first_name }} {{ post_user.last_name }}
+                                </a>
+                            </h6>
+                            <small class="text-muted">{{ post.date.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                        </div>
+                    </div>
+
+                    <!-- Post Content -->
+                    {% if post.title %}
+                        <h4 class="mb-3">{{ post.title }}</h4>
+                    {% endif %}
+                    
+                    <p class="mb-3">{{ post.content | nl2br }}</p>
+
+                    <!-- Post Image -->
+                    {% if post.image %}
+                        <div class="mb-3">
+                            <img src="{{ url_for('static', filename='uploads/' + post.image) }}" 
+                                 class="img-fluid rounded" style="max-width: 100%; height: auto;" alt="Post image">
+                        </div>
+                    {% endif %}
+
+                    <!-- Post Actions -->
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <!-- Like Button -->
+                        <form action="/post/{{ post.id }}/like" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm {% if post.user_liked %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                <i class="fas fa-thumbs-up"></i> {{ post.likes_count }}
+                            </button>
+                        </form>
+
+                        <!-- Dislike Button -->
+                        <form action="/post/{{ post.id }}/dislike" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-sm {% if post.user_disliked %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                                <i class="fas fa-thumbs-down"></i> {{ post.dislikes_count }}
+                            </button>
+                        </form>
+
+                        <span class="text-muted">
+                            <i class="fas fa-comment"></i> {{ post.comments_count }} Comments
+                        </span>
+                    </div>
+
+                    <!-- Comment Form -->
+                    <form action="/post/{{ post.id }}/comment/" method="post" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="comment" placeholder="Write a comment..." required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Comments ({{ comments|length }})</h5>
+                </div>
+                <div class="card-body">
+                    {% if comments %}
+                        {% for comment in comments %}
+                        <div class="d-flex mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+                            {% if comment.user.profile_picture %}
+                                <img src="{{ url_for('static', filename='profile_pictures/' + comment.user.profile_picture) }}" 
+                                     class="rounded-circle me-3" width="32" height="32" alt="Profile">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center me-3" 
+                                     style="width: 32px; height: 32px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <div class="bg-light rounded p-2">
+                                    <h6 class="mb-1">
+                                        <a href="/profile/{{ comment.user.id }}" class="text-decoration-none">
+                                            {{ comment.user.first_name }} {{ comment.user.last_name }}
+                                        </a>
+                                    </h6>
+                                    <p class="mb-0">{{ comment.data }}</p>
+                                </div>
+                                <small class="text-muted">{{ comment.date.strftime('%B %d, %Y at %I:%M %p') }}</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center">No comments yet. Be the first to comment!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

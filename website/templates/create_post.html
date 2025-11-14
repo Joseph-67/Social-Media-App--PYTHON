@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Create New Post</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                placeholder="Enter post title">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="content">Content</label>
+                            <textarea class="form-control" id="content" name="content" rows="6"
+                                placeholder="Write your post content here..." required></textarea>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="image">Upload Image (optional)</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="tags">Tags (comma separated)</label>
+                            <input type="text" class="form-control" id="tags" name="tags"
+                                placeholder="Enter tags e.g. news, tech, lifestyle">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="category">Category</label>
+                            <select class="form-control" id="category" name="category">
+                                <option value="">Select a category</option>
+                                <option value="general">General</option>
+                                <option value="technology">Technology</option>
+                                <option value="lifestyle">Lifestyle</option>
+                                <option value="travel">Travel</option>
+                                <option value="food">Food</option>
+                            </select>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="draft" name="draft">
+                            <label class="form-check-label" for="draft">
+                                Save as draft
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Publish Post
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview image before upload
+    document.getElementById('image').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.style.maxWidth = '100%';
+                preview.style.marginTop = '10px';
+                document.getElementById('image').parentNode.appendChild(preview);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}
